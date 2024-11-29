@@ -23,7 +23,7 @@ const App:React.FC = () => {
 
     return (
         <div className="App">
-            <span className="heading">Todo Reminders</span>
+            <span className="heading">Todo Tasks</span>
             <AddTodo title={todo} setTodo={setTodo} handleAdd={handleAdd}/>
             <div className="todos">
                 {todos.map(todo => (

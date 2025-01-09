@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { getTodos, addTodo, updateTodo, deleteTodo, completeTodo } from "../models/todoModel";
 import { StatusCodes } from "http-status-codes";
 
+// hexagonal architechture better option than model view controller. 
+
 export const fetchTodos = async(req: Request, res: Response) => {
     try {
         const todos = await getTodos();

@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Todo } from "../model";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete, MdDone } from "react-icons/md";
 import "./styles.css"
 import { deleteTodo, toggleTodo, updateTodo } from "../services/todoService";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 interface TodoItemProps {
     todo: Todo;
@@ -11,85 +12,98 @@ interface TodoItemProps {
     setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({todo, todos, setTodos}:TodoItemProps) => {
+const TodoItem: React.FC<TodoItemProps> = ({ todo, todos, setTodos }: TodoItemProps) => {
 
     const [edit, setEdit] = useState<boolean>(false);
     const [editTodo, setEditTodo] = useState<string>(todo.title);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const handleDone = async (id: number) => {
         try {
             const updatedTodo = await toggleTodo(id, !todo.completed);
-            setTodos((currentTodos) => 
-                currentTodos.map((todo) => 
-                (todo.id === id? {...todo, completed: updatedTodo.completed} : todo
-              ))
+            setTodos((currentTodos) =>
+                currentTodos.map((todo) =>
+                (todo.id === id ? { ...todo, completed: updatedTodo.completed } : todo
+                ))
             );
-        } catch(error) {
+        } catch (error) {
             console.error("Failed to toggle todo", error);
         }
     };
 
-    const handleDelete = async(id: number) => {
-        try{
+    const handleDelete = async (id: number) => {
+        try {
             await deleteTodo(id);
             setTodos(
-                todos.filter((todo)=> todo.id !== id)
+                todos.filter((todo) => todo.id !== id)
             );
-        }catch (error) {
+        } catch (error) {
             console.error("Failed to delete todo", error);
         }
     };
 
-    const handleEdit = async (e:React.FormEvent, id: number) => {
+    const handleEdit = async (e: React.FormEvent, id: number) => {
         e.preventDefault();
-        try{
+        try {
             const updatedTodo = await updateTodo(id, editTodo);
-            setTodos((currentTodos) => 
+            setTodos((currentTodos) =>
                 currentTodos.map((todo) =>
-                todo.id === id? {...todo, title: updatedTodo.title} : todo
-            ))
+                    todo.id === id ? { ...todo, title: updatedTodo.title } : todo
+                ))
             setEdit(false);
-        } catch(error){
+        } catch (error) {
             console.error("Failed to edit todo", error)
         }
     }
 
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(()=> {
+    useEffect(() => {
         inputRef.current?.focus();
     }, [edit]);
 
-    return (<form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
-        {edit ? (
-            <input
-                ref={inputRef}
-                value={editTodo}
-                onChange={(e) => setEditTodo(e.target.value)}
-                className='todos__single--text'
+    return (
+        <>
+            <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
+                {edit ? (
+                    <input
+                        ref={inputRef}
+                        value={editTodo}
+                        onChange={(e) => setEditTodo(e.target.value)}
+                        className='todos__single--text'
+                    />
+                ) : (todo.completed ? (
+                    <s className="todos__single--text">{todo.title}</s>
+                ) : (
+                    <span className="todos__single--text">{todo.title}</span>
+                ))
+                }
+                <div>
+                    <span className="icon" onClick={() => {
+                        if (!edit && !todo.completed) {
+                            setEdit(!edit);
+                        }
+                    }}>
+                        <FaEdit />
+                    </span>
+                    <span className="icon" onClick={() => setIsModalOpen(true)}>
+                        <MdDelete />
+                    </span>
+                    <span className="icon" onClick={() => handleDone(todo.id)}>
+                        <MdDone />
+                    </span>
+                </div>
+            </form>
+            <DeleteConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={() => {
+                    handleDelete(todo.id);
+                    setIsModalOpen(false);
+                }}
             />
-        ) : (todo.completed ? (
-            <s className="todos__single--text">{todo.title}</s>
-        ) : (
-            <span className="todos__single--text">{todo.title}</span>
-        ))
-    }
-    <div>
-        <span className="icon" onClick={()=> {
-            if(!edit && !todo.completed) {
-                setEdit(!edit);
-            }
-        }}>
-            <FaEdit/>
-        </span>
-        <span className="icon" onClick={() => handleDelete(todo.id)}>
-            <MdDelete/>
-        </span>
-        <span className="icon" onClick={() => handleDone(todo.id)}>
-            <MdDone/>
-        </span>
-    </div>
-    </form>);
+        </>
+    );
 };
 
 export default TodoItem;

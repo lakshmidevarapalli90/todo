@@ -1,4 +1,4 @@
-# TODO Tasks
+# TODO Application
 
 <img width="1717" alt="image" src="https://github.com/user-attachments/assets/b0a4424d-0cf5-4ad8-9cac-0dcc0cd983a8" />
 

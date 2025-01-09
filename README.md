@@ -1,6 +1,7 @@
 # TODO Tasks
 
-![image](https://github.com/user-attachments/assets/926e59a3-3cce-4606-9218-b061c7c544a7)
+<img width="1717" alt="image" src="https://github.com/user-attachments/assets/b0a4424d-0cf5-4ad8-9cac-0dcc0cd983a8" />
+
 
 ## Introduction
 

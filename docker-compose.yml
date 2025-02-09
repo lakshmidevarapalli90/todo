@@ -2,8 +2,6 @@ version: '3.8'
 services:
   db:
     image: postgres:16
-    env_file: 
-      - ./backend/.env
     container_name: todos_db
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -14,13 +12,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - todo_network  
 
   backend:
     build: 
       context: ./backend   
       dockerfile: ../.docker/backend.Dockerfile
-    env_file: 
-      - ./backend/.env  
     container_name: todos_backend
     environment:
       - DB_HOST=db     
@@ -29,9 +27,15 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     ports:
-      - "8000:8000"
+      - "5000:5000"
     depends_on:
       - db
+    networks:
+      - todo_network
 
 volumes:
   postgres_data:
+
+networks:
+  todo_network:
+    driver: bridge

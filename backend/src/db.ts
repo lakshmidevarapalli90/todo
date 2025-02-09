@@ -3,22 +3,31 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = new Pool({
-    user: process.env.DB_USER,
+// Add logging to debug connection issues
+console.log('Database connection config:', {
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || '5432'),
+    user: process.env.DB_USER,
+    // Don't log the actual password
+    hasPassword: !!process.env.DB_PASSWORD
 });
 
-(async () => {
-    try {
-        const result = await pool.query('SELECT NOW()');
-        console.log('Database connected successfully!', result.rows[0]);
-    } catch (err) {
-        console.error('Error connecting to the database:', err);
-        process.exit(1);
+const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '5432'),
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD
+});
+
+// Test the connection
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Error testing database connection:', err);
+    } else {
+        console.log('Database connection test successful:', res.rows[0]);
     }
-})();
+});
 
 export default pool;

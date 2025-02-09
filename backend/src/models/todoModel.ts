@@ -7,8 +7,13 @@ export interface Todo {
 }
 
 export const getTodos = async (): Promise<Todo[]> => {
-    const result = await pool.query('SELECT * FROM todos ORDER BY id');
-    return result.rows;
+    try {
+        const result = await pool.query('SELECT * FROM todos ORDER BY id');
+        return result.rows;
+    } catch(error) {
+        console.error('Error in getTodos:', error);
+        throw new Error('Database query failed');
+    }
 }
 
 export const addTodo = async (todo: Todo): Promise<Todo> => {

@@ -6,7 +6,10 @@
   "scripts": {
     "start:frontend": "cd frontend && npm start",
     "start:backend": "cd backend && npm start",
-    "start": "npm-run-all --parallel start:backend start:frontend"
+    "start": "npm-run-all --parallel start:backend start:frontend",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:reset": "docker-compose down -v && docker-compose up -d"
   },
   "author": "",
   "license": "ISC",

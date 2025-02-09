@@ -42,7 +42,7 @@ export const toggleTodo = async (req: Request, res: Response) => {
         const todo = await completeTodo(Number(id), completed);
         res.status(StatusCodes.OK).json(todo);
     } catch (err) {
-        console.error('Error updating todo:', err);
+        //console.error('Error updating todo:', err);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Failed to update todo' });
     }
 };

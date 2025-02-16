@@ -1,0 +1,24 @@
+# docker-compose.template.yml
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../.docker/frontend.Dockerfile
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
+    ports:
+      - "3001:3001"
+
+  backend:
+    build: 
+      context: ./backend   
+      dockerfile: ../.docker/backend.Dockerfile
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5000:5000"

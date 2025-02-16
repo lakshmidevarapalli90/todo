@@ -7,3 +7,6 @@ node_modules
 task-role-trust-policy.json
 trust-policy.json
 aws/
+*.pem
+docker-compose.yml
+.env

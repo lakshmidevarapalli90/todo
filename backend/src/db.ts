@@ -1,33 +1,36 @@
 import { Pool } from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-// Add logging to debug connection issues
-console.log('Database connection config:', {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    // Don't log the actual password
-    hasPassword: !!process.env.DB_PASSWORD
-});
 
 const pool = new Pool({
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '5432'),
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    password: process.env.DB_PASSWORD,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 // Test the connection
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
+const testConnection = async (): Promise<void> => {
+    try {
+        const client = await pool.connect();
+        console.log('Database connection config:', {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            database: process.env.DB_NAME,
+            user: process.env.DB_USER,
+            hasPassword: !!process.env.DB_PASSWORD
+        });
+
+        const result = await client.query('SELECT NOW()');
+        console.log('Database connected successfully:', result.rows[0]);
+        client.release();
+    } catch (err) {
         console.error('Error testing database connection:', err);
-    } else {
-        console.log('Database connection test successful:', res.rows[0]);
     }
-});
+};
+
+testConnection();
 
 export default pool;

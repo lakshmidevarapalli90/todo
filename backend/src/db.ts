@@ -6,15 +6,12 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    ssl: {
-        rejectUnauthorized: false
-    }
 });
 
 // Test the connection
 const testConnection = async (): Promise<void> => {
+    console.log("test db connectio")
     try {
-        const client = await pool.connect();
         console.log('Database connection config:', {
             host: process.env.DB_HOST,
             port: process.env.DB_PORT,
@@ -23,7 +20,9 @@ const testConnection = async (): Promise<void> => {
             hasPassword: !!process.env.DB_PASSWORD
         });
 
+        const client = await pool.connect();
         const result = await client.query('SELECT NOW()');
+        const todo_table = await client.query('CREATE TABLE IF NOT EXISTS todos (id SERIAL PRIMARY KEY, title VARCHAR(225) NOT NULL, completed BOOLEAN DEFAULT FALSE); ')
         console.log('Database connected successfully:', result.rows[0]);
         client.release();
     } catch (err) {

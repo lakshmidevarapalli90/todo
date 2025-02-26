@@ -8,5 +8,5 @@ task-role-trust-policy.json
 trust-policy.json
 aws/
 *.pem
-docker-compose.yml
+# docker-compose.yml
 .env

@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../.docker/frontend.Dockerfile
+    container_name: todos_frontend
+    ports:
+      - "3001:3001"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    networks:
+      - todo_network
+
+  backend:
+    image: node:18
+    working_dir: /usr/src/app
+    container_name: todos_backend
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=example
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/usr/src/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - todo_network
+    command: npm run dev 
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: example
+    networks:
+      - todo_network  
+
+networks:
+  todo_network:
+    driver: bridge
